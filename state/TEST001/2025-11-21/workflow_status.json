@@ -1,0 +1,13 @@
+{
+  "patient_id": "TEST001",
+  "date": "2025-11-21",
+  "started_at": "2025-11-21T20:23:02.329858",
+  "completed_at": null,
+  "phases": {
+    "test": {
+      "completed_at": "2025-11-21T20:23:02.330577",
+      "metadata": {}
+    }
+  },
+  "completed": false
+}
