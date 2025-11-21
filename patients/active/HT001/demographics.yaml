@@ -1,0 +1,94 @@
+# Patient Demographics - EXAMPLE DATA
+# This is anonymized example data for demonstration purposes
+
+patient:
+  id: HT001
+  age: 68
+  gender: M
+  admission_date: "2025-11-15"
+
+anthropometrics:
+  height: 175  # cm
+  weight: 82   # kg
+  bmi: 26.8
+  ideal_body_weight: 70  # kg
+
+comorbidities:
+  - type: "Diabetes Mellitus Type 2"
+    duration_years: 15
+    controlled: true
+    medications:
+      - "Metformin"
+      - "Insulin"
+
+  - type: "Hypertension"
+    duration_years: 10
+    controlled: true
+    medications:
+      - "Amlodipine"
+      - "Ramipril"
+
+  - type: "Chronic Kidney Disease Stage 3"
+    baseline_creatinine: 1.2
+    baseline_gfr: 55
+
+past_medical_history:
+  - "Benign Prostatic Hyperplasia"
+  - "Dyslipidemia"
+
+past_surgical_history:
+  - procedure: "Cholecystectomy"
+    year: 2018
+
+medications_home:
+  - name: "Metformin"
+    dose: "1000mg"
+    frequency: "BID"
+  - name: "Insulin Glargine"
+    dose: "20 units"
+    frequency: "HS"
+  - name: "Amlodipine"
+    dose: "10mg"
+    frequency: "QD"
+  - name: "Ramipril"
+    dose: "5mg"
+    frequency: "QD"
+  - name: "Atorvastatin"
+    dose: "40mg"
+    frequency: "QD"
+  - name: "Aspirin"
+    dose: "100mg"
+    frequency: "QD"
+
+allergies:
+  drug_allergies:
+    - drug: "Penicillin"
+      reaction: "Rash"
+      severity: "mild"
+
+social_history:
+  smoking: "Former smoker (quit 10 years ago)"
+  pack_years: 20
+  alcohol: "Occasional"
+  occupation: "Retired teacher"
+
+family_history:
+  - condition: "Diabetes"
+    relation: "Mother"
+  - condition: "Coronary artery disease"
+    relation: "Father"
+
+code_status:
+  full_code: true
+  documented_date: "2025-11-15"
+  discussed_with: "Patient and family"
+
+contact:
+  next_of_kin: "Spouse"
+  relationship: "Wife"
+  contact_available: true
+
+notes:
+  - "Baseline creatinine 1.2 mg/dL - important for AKI staging"
+  - "Usually ambulatory, independent in ADLs"
+  - "Good social support at home"

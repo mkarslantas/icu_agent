@@ -1,0 +1,148 @@
+# ICU Admission Data - EXAMPLE
+# Patient HT001
+
+admission:
+  date: "2025-11-15"
+  time: "14:30"
+  admission_source: "Emergency Department"
+  admission_type: "Emergency"
+  transport: "Hospital bed"
+
+chief_complaint: "Septic shock secondary to urosepsis"
+
+primary_diagnosis:
+  diagnosis: "Urosepsis with Septic Shock"
+  icd10: "N39.0"
+  secondary_diagnoses:
+    - "Acute Kidney Injury Stage 2"
+    - "Type 2 Diabetes Mellitus"
+    - "Chronic Kidney Disease Stage 3"
+
+history_of_present_illness: |
+  68-year-old male with history of diabetes, hypertension, and CKD Stage 3
+  presented to ED with 3 days of fever (39.2°C), dysuria, suprapubic pain,
+  and altered mental status. In ED, found to be hypotensive (BP 85/50 mmHg)
+  despite 3L crystalloid resuscitation, lactate 4.8 mmol/L.
+
+  Urinalysis showed pyuria, bacteriuria. Blood cultures and urine cultures obtained.
+  Started on broad-spectrum antibiotics (Meropenem) and norepinephrine.
+
+  Admitted to ICU for septic shock management.
+
+admission_vitals:
+  heart_rate: 115
+  blood_pressure:
+    systolic: 95
+    diastolic: 55
+    map: 68
+  respiratory_rate: 24
+  spo2: 94
+  temperature: 38.8
+  supplemental_oxygen:
+    device: "Nasal cannula"
+    flow: 4
+    fio2: 36
+
+admission_labs:
+  hematology:
+    wbc: 18.5
+    hemoglobin: 10.2
+    platelet: 145
+  chemistry:
+    sodium: 138
+    potassium: 4.2
+    chloride: 102
+    bicarbonate: 18
+    bun: 35
+    creatinine: 2.4
+    glucose: 245
+  inflammatory:
+    crp: 245
+    procalcitonin: 8.5
+  blood_gas:
+    ph: 7.28
+    pco2: 32
+    po2: 88
+    hco3: 18
+    lactate: 4.8
+  coagulation:
+    pt: 14.5
+    inr: 1.2
+    aptt: 32
+
+admission_severity:
+  initial_sofa: 10
+  sofa_components:
+    respiratory: 1
+    coagulation: 0
+    hepatic: 0
+    cardiovascular: 3
+    neurological: 1
+    renal: 2
+  initial_apache_ii: 24
+  predicted_mortality_sofa: 40-50%
+  predicted_mortality_apache: 40%
+
+initial_interventions:
+  fluid_resuscitation:
+    type: "Crystalloid (0.9% NaCl)"
+    volume_ml: 3000
+    timing: "First 3 hours"
+
+  vasopressors:
+    - drug: "Norepinephrine"
+      initial_dose: 0.25
+      unit: "mcg/kg/min"
+      start_time: "15:00"
+
+  antibiotics:
+    - drug: "Meropenem"
+      dose: "1g"
+      frequency: "q8h"
+      route: "IV"
+      start_time: "14:45"
+      indication: "Empiric for urosepsis"
+
+  source_control:
+    urinary_catheter: "Inserted in ED"
+    cultures_obtained:
+      - "Blood cultures x2"
+      - "Urine culture"
+
+admission_assessment:
+  mental_status: "Lethargic but arousable"
+  gcs:
+    eye: 3
+    verbal: 4
+    motor: 6
+    total: 13
+
+  respiratory: "Tachypneic but maintaining oxygenation on low-flow O2"
+
+  cardiovascular: "Hypotensive requiring norepinephrine, tachycardic, warm peripheries"
+
+  abdomen: "Suprapubic tenderness, no peritoneal signs"
+
+  extremities: "Warm, capillary refill <2 sec"
+
+initial_plan:
+  - "Continue broad-spectrum antibiotics pending cultures"
+  - "Titrate norepinephrine to MAP ≥65 mmHg"
+  - "Monitor lactate clearance q2-4h"
+  - "Strict I/O monitoring, target UOP >0.5 mL/kg/hr"
+  - "Glucose control, insulin protocol"
+  - "Sedation as needed for comfort, avoid over-sedation"
+  - "Source control: urinary catheter in place"
+  - "Daily reassessment for antibiotic de-escalation"
+  - "Monitor kidney function, adjust meds for renal function"
+
+goals_of_care:
+  code_status: "Full code"
+  discussed_with: "Patient (when more alert) and family"
+  documented: true
+
+notes:
+  - "High-risk patient: elderly, diabetic, CKD, high SOFA/APACHE"
+  - "Good pre-morbid functional status - worth aggressive treatment"
+  - "Family very involved and supportive"
+  - "Baseline Cr 1.2, now 2.4 → AKI Stage 2 on CKD"

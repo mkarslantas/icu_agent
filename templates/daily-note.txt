@@ -1,0 +1,30 @@
+[Yaş] yaşında [erkek/kadın] hasta, [tanı] nedeniyle [X]inci gün takipte.
+
+Genel durumu [iyi/orta/kötü], bilinci [açık/letarjik/stupor/koma], [koopere/non-koopere], [oryante/dezoryante].
+Glasgow koma skoru [GCS değeri yazıyla].
+
+Hemodinamisi [vazopresör varsa: ilaç adı doz mikrogram kilogram dakika ile] [stabil/instabil].
+Ortalama arter basıncı [değer] mmHg civarında.
+[Eğer değişim varsa: Önceki güne göre vazopresör ihtiyacı [azaldı/arttı], [önceki doz]'dan [şimdiki doz]'e [indi/çıktı].]
+Kalp hızı [değer], [sinüs ritmi/AF/diğer].
+
+Solunum hızı [değer], oksijen satürasyonu yüzde [değer], FiO2 yüzde [değer] ile.
+[Eğer entübe: [Ventilasyon modu] modda mekanik ventilasyonda, PEEP [değer], PIP [değer].]
+[Eğer ekstübe: Spontan solunumda, [maske/nazal kanül/HFNC] ile oksijen desteği.]
+
+İdrar çıkışı [yeterli/az], saatte [değer] ml civarında.
+Kreatinin [değer], [önceki değer] idi, [düzelme var/kötüleşme/stabil].
+[Elektrolit değerleri: Sodyum, potasyum, vb.]
+
+Laktat [değer], [önceki değer] idi, perfüzyon [iyileşiyor/kötüleşiyor/stabil].
+
+Ateş [değer] derece.
+Lökosit [değer], [önceki değer] idi.
+Hemoglobin [değer], trombosit [değer].
+CRP [değer], [önceki değer] idi.
+Prokalsitonin [değer].
+
+Antibiyoterapiye [devam/değişiklik], [ilaç adı] [X]inci gün.
+[Kültür sonucu varsa: Kan/idrar kültüründe [organizma] üredi, [antibiyotik]'e [duyarlı/dirençli].]
+
+Plan: [Tedavi planı - vazopresör, weaning, antibiyotik, diğer]

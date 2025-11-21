@@ -1,0 +1,337 @@
+# Ventilator Weaning Protocols
+# Evidence-based criteria for mechanical ventilation liberation
+
+weaning_readiness_criteria:
+  description: "Assess daily to determine readiness for spontaneous breathing trial"
+
+  must_meet_all:
+    - criterion: "Adequate oxygenation"
+      parameters:
+        pao2_fio2_ratio: "≥150-200"
+        peep: "≤5-8 cmH2O"
+        fio2: "≤0.4-0.5"
+      rationale: "Adequate gas exchange without high support"
+
+    - criterion: "Hemodynamic stability"
+      parameters:
+        map: "≥60-65 mmHg"
+        heart_rate: "≤140 bpm"
+        no_active_myocardial_ischemia: true
+        vasopressor_requirements: "minimal or none (low-dose acceptable)"
+      acceptable_vasopressors:
+        norepinephrine: "≤0.1 mcg/kg/min"
+        vasopressin: "≤0.04 units/min"
+      rationale: "Cardiovascular system can tolerate increased work of breathing"
+
+    - criterion: "Adequate mental status"
+      parameters:
+        gcs: "≥13"
+        rass: "-2 to 0"
+        able_to_follow_commands: true
+        arousable: true
+      rationale: "Patient can protect airway and trigger breaths"
+
+    - criterion: "No active bleeding or severe anemia"
+      parameters:
+        hemoglobin: "≥7-10 g/dL"
+        no_active_hemorrhage: true
+      rationale: "Adequate oxygen carrying capacity"
+
+    - criterion: "Acid-base balance"
+      parameters:
+        ph: "≥7.25"
+        no_severe_metabolic_acidosis: true
+      rationale: "Adequate respiratory reserve"
+
+    - criterion: "Electrolyte balance"
+      parameters:
+        potassium: "3.5-5.0 mEq/L"
+        magnesium: "≥1.5 mg/dL"
+        phosphate: "≥2.0 mg/dL"
+      rationale: "Adequate muscle function for breathing"
+
+    - criterion: "Adequate cough and airway protection"
+      assessment: "Clinical evaluation"
+      parameters:
+        cough_strength: "moderate to strong"
+        minimal_secretions: "or manageable with suctioning"
+
+spontaneous_breathing_trial:
+  description: "SBT Protocol for weaning assessment"
+
+  preparation:
+    - "Explain procedure to patient"
+    - "Position patient semi-recumbent (30-45°)"
+    - "Ensure adequate pain control"
+    - "Suction airway if needed"
+    - "Ensure emergency equipment available"
+
+  methods:
+    pressure_support:
+      name: "Pressure Support Ventilation"
+      settings:
+        ps: "5-8 cmH2O"
+        peep: "5 cmH2O"
+        fio2: "≤0.5 or same as pre-SBT"
+      duration: "30-120 minutes"
+      preference: "Preferred method - mimics post-extubation state"
+
+    t_piece:
+      name: "T-piece trial"
+      settings:
+        oxygen_delivery: "via T-piece adapter"
+        fio2: "same as pre-SBT"
+      duration: "30-120 minutes"
+      note: "More physiologically stressful than PS"
+
+    cpap:
+      name: "CPAP trial"
+      settings:
+        cpap: "5 cmH2O"
+        fio2: "≤0.5 or same as pre-SBT"
+      duration: "30-120 minutes"
+
+  monitoring_during_sbt:
+    vital_signs_frequency: "every 5 minutes initially, then every 15 minutes"
+
+    parameters_to_monitor:
+      - "Respiratory rate"
+      - "Heart rate"
+      - "Blood pressure"
+      - "Oxygen saturation"
+      - "Subjective dyspnea"
+      - "Diaphoresis"
+      - "Accessory muscle use"
+      - "Paradoxical breathing"
+      - "Anxiety/agitation"
+
+  sbt_failure_criteria:
+    stop_immediately_if:
+      - criterion: "Respiratory rate"
+        threshold: ">35/min for >5 minutes"
+      - criterion: "Oxygen saturation"
+        threshold: "<90%"
+      - criterion: "Heart rate"
+        threshold: ">140 bpm or sustained increase >20%"
+      - criterion: "Systolic blood pressure"
+        threshold: ">180 mmHg or <90 mmHg"
+      - criterion: "Arrhythmia"
+        description: "New or worsening"
+      - criterion: "Mental status"
+        description: "Anxiety, agitation, decreased consciousness"
+      - criterion: "Diaphoresis"
+        description: "Marked"
+      - criterion: "Signs of increased work of breathing"
+        description: "Accessory muscle use, paradoxical breathing"
+
+  sbt_success_criteria:
+    must_meet_all_for_30_120_minutes:
+      - "Respiratory rate <35/min"
+      - "SpO2 >90% (or baseline)"
+      - "Heart rate <140 bpm and no sustained increase >20%"
+      - "Systolic BP 90-180 mmHg"
+      - "No significant change in mental status"
+      - "No signs of respiratory distress"
+
+    additional_assessments:
+      rsbi:
+        name: "Rapid Shallow Breathing Index"
+        calculation: "RR / Vt (L)"
+        threshold: "<105 breaths/min/L predicts success"
+        note: "f/VT ratio"
+        timing: "measure after 1 minute of spontaneous breathing"
+
+      nif:
+        name: "Negative Inspiratory Force"
+        threshold: "<-20 to -30 cmH2O"
+        note: "Indicates adequate respiratory muscle strength"
+
+post_sbt_decision:
+  if_sbt_passed:
+    next_steps:
+      - "Assess airway protection and secretion management"
+      - "Evaluate upper airway patency (cuff leak test if high risk)"
+      - "Plan extubation if all criteria met"
+      - "Ensure post-extubation plan (oxygen, respiratory therapy)"
+
+  if_sbt_failed:
+    next_steps:
+      - "Return to comfortable ventilator settings"
+      - "Investigate and address causes of failure"
+      - "Optimize patient condition"
+      - "Retry SBT in 24 hours if conditions improve"
+
+extubation_readiness:
+  airway_protection:
+    - criterion: "Cough strength"
+      assessment: "Strong voluntary cough"
+    - criterion: "Gag reflex"
+      assessment: "Intact"
+    - criterion: "Secretions"
+      volume: "Minimal to moderate"
+      frequency: "Not requiring frequent suctioning (<q2h)"
+
+  upper_airway_patency:
+    cuff_leak_test:
+      indication: "High risk for post-extubation stridor"
+      risk_factors:
+        - "Prolonged intubation (>6 days)"
+        - "Female gender"
+        - "Traumatic intubation"
+        - "Large endotracheal tube"
+        - "Autoimmune disease affecting airway"
+      method: "Deflate cuff, measure exhaled tidal volume difference"
+      interpretation:
+        cuff_leak_positive: "Exhaled VT decrease <110 mL or <12%"
+        high_risk_stridor: "Consider corticosteroids, delayed extubation"
+
+  mental_status:
+    - "Able to follow commands"
+    - "GCS ≥13"
+    - "RASS -1 to +1"
+
+post_extubation_care:
+  monitoring:
+    frequency: "Continuous for first 4-24 hours"
+    parameters:
+      - "Respiratory rate and pattern"
+      - "Oxygen saturation"
+      - "Work of breathing"
+      - "Mental status"
+      - "Secretion management"
+
+  oxygen_therapy:
+    options:
+      - "Nasal cannula (1-6 L/min)"
+      - "Simple face mask (6-10 L/min)"
+      - "High-flow nasal cannula (HFNC)"
+      - "Non-invasive ventilation (NIV) if appropriate"
+
+  preventive_measures:
+    - "Head of bed elevation 30-45°"
+    - "Aggressive pulmonary toilet"
+    - "Incentive spirometry"
+    - "Early mobilization"
+    - "Adequate analgesia without over-sedation"
+
+  reintubation_criteria:
+    consider_if:
+      - "Respiratory rate >35/min sustained"
+      - "SpO2 <90% despite supplemental O2"
+      - "pH <7.30 with rising PaCO2"
+      - "Decreased mental status"
+      - "Inability to clear secretions"
+      - "Hemodynamic instability"
+
+difficult_to_wean_patients:
+  definition: "Failed ≥3 weaning attempts or requiring >7 days to wean"
+
+  common_causes:
+    respiratory:
+      - "Respiratory muscle weakness/fatigue"
+      - "High ventilatory requirements (COPD, obesity)"
+      - "Secretion retention"
+      - "Pleural effusions"
+
+    cardiovascular:
+      - "Cardiac dysfunction (systolic or diastolic)"
+      - "Fluid overload"
+      - "Ischemia during weaning"
+
+    neurological:
+      - "Persistent encephalopathy"
+      - "Delirium"
+      - "Neuromuscular weakness (ICU-acquired weakness)"
+      - "Phrenic nerve dysfunction"
+
+    metabolic:
+      - "Electrolyte imbalances"
+      - "Malnutrition"
+      - "Hypothyroidism"
+      - "Anemia"
+
+    psychological:
+      - "Anxiety"
+      - "Depression"
+      - "Ventilator dependence"
+
+  management_strategies:
+    - "Identify and treat underlying causes"
+    - "Optimize nutrition (protein 1.5-2 g/kg/day)"
+    - "Early mobilization and physical therapy"
+    - "Gradual weaning approach (progressive PS reduction)"
+    - "Treat cardiac dysfunction (diuresis if needed)"
+    - "Correct electrolyte abnormalities"
+    - "Manage pain and anxiety appropriately"
+    - "Consider tracheostomy if prolonged ventilation expected"
+
+weaning_protocols:
+  gradual_ps_weaning:
+    description: "Daily reduction of pressure support"
+    method:
+      - "Start at comfortable PS (typically 10-15 cmH2O)"
+      - "Reduce PS by 2 cmH2O daily or twice daily"
+      - "Monitor respiratory rate, VT, patient comfort"
+      - "Goal PS 5-8 cmH2O before SBT"
+
+  simv_weaning:
+    description: "Synchronized Intermittent Mandatory Ventilation reduction"
+    method:
+      - "Gradually reduce mandatory rate"
+      - "Increase spontaneous breathing component"
+      - "Monitor patient work of breathing"
+    note: "Less commonly used - PS weaning preferred"
+
+  daily_sbt_protocol:
+    description: "Daily spontaneous breathing trials"
+    method:
+      - "Screen daily for SBT readiness"
+      - "Perform SBT if criteria met"
+      - "Extubate if SBT passed and extubation criteria met"
+      - "Return to full support if SBT failed, retry next day"
+    evidence: "Reduces duration of mechanical ventilation"
+
+special_populations:
+  copd:
+    considerations:
+      - "May tolerate higher PaCO2 (permissive hypercapnia)"
+      - "Risk of auto-PEEP"
+      - "Longer weaning process common"
+      - "NIV may prevent reintubation"
+
+  cardiac_dysfunction:
+    considerations:
+      - "Weaning increases venous return and cardiac work"
+      - "Monitor for signs of pulmonary edema"
+      - "May require diuresis before weaning"
+      - "Consider echocardiography if repeatedly failing"
+
+  neuromuscular_weakness:
+    considerations:
+      - "Prolonged weaning expected"
+      - "Early tracheostomy consideration"
+      - "Aggressive physical therapy"
+      - "Nutritional support critical"
+
+evidence_base:
+  key_trials:
+    - name: "Ely et al. 1996"
+      finding: "Daily SBT screening reduces ventilation duration"
+    - name: "Girard et al. 2008 (ABC Trial)"
+      finding: "Daily SAT + SBT reduces mortality and ventilator days"
+    - name: "Brochard et al. 1994"
+      finding: "PS weaning superior to SIMV or T-piece"
+
+  guidelines:
+    - "ATS/ACCP Guidelines on Liberation from Mechanical Ventilation (2017)"
+    - "Evidence-based guidelines for weaning and discontinuing ventilatory support"
+
+clinical_pearls:
+  - "Most patients who meet readiness criteria will pass SBT"
+  - "Don't delay SBT if criteria met - prolonged ventilation increases complications"
+  - "Failed SBT is not harmful - it provides diagnostic information"
+  - "Optimize patient before SBT (pain control, positioning, secretion management)"
+  - "Weaning failure often reflects unresolved underlying disease"
+  - "Consider tracheostomy early in anticipated prolonged ventilation (>14-21 days)"
+  - "Sedation interruption + SBT is powerful combination"
+  - "Post-extubation NIV may prevent reintubation in high-risk patients"

@@ -1,0 +1,182 @@
+# ICU Monitoring System .gitignore
+
+# ==========================================
+# PATIENT DATA - PRIVACY CRITICAL
+# ==========================================
+# Never commit actual patient data
+patients/active/*/notes/*.txt
+patients/active/*/structured/*.json
+patients/active/*/scores/*.json
+patients/active/*/trends/*.json
+patients/active/*/reports/*.md
+patients/discharged/
+patients/deceased/
+
+# Allow example patient HT001 for demonstration
+!patients/active/HT001/
+!patients/active/HT001/**
+
+# Demographics files contain PHI - exclude by default
+patients/active/*/demographics.yaml
+patients/active/*/admission.yaml
+
+# Allow HT001 example files
+!patients/active/HT001/demographics.yaml
+!patients/active/HT001/admission.yaml
+!patients/active/HT001/notes/2025-11-20-day5.txt
+
+# ==========================================
+# LOGS
+# ==========================================
+logs/*.log
+logs/**/*.log
+*.log
+
+# Keep logs directory
+!logs/.gitkeep
+
+# ==========================================
+# TEMPORARY FILES
+# ==========================================
+*.tmp
+*.swp
+*.swo
+*~
+.DS_Store
+*.bak
+*.backup
+
+# ==========================================
+# BACKUPS
+# ==========================================
+backups/
+*.tar.gz
+*.zip
+
+# ==========================================
+# PYTHON
+# ==========================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+venv/
+ENV/
+env/
+.venv
+pip-log.txt
+pip-delete-this-directory.txt
+
+# ==========================================
+# NODE / JAVASCRIPT
+# ==========================================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# ==========================================
+# IDE / EDITORS
+# ==========================================
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+.project
+.settings/
+.classpath
+
+# ==========================================
+# OS SPECIFIC
+# ==========================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+.directory
+.Trash-*
+
+# ==========================================
+# ENVIRONMENT
+# ==========================================
+.env
+.env.local
+.env.*.local
+secrets.yaml
+credentials.json
+
+# ==========================================
+# DATABASES
+# ==========================================
+*.db
+*.sqlite
+*.sqlite3
+
+# ==========================================
+# SECURITY / SENSITIVE
+# ==========================================
+# API keys, tokens, certificates
+*.pem
+*.key
+*.cert
+*.crt
+api_keys.txt
+tokens.txt
+
+# ==========================================
+# TESTING
+# ==========================================
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.hypothesis/
+
+# ==========================================
+# DOCUMENTATION BUILD
+# ==========================================
+docs/_build/
+site/
+
+# ==========================================
+# PROJECT SPECIFIC
+# ==========================================
+# Allow template files and configuration
+!templates/
+!config/
+!prompts/
+!utils/
+!docs/
+!knowledge-base/
+
+# Keep directory structure placeholders
+!patients/discharged/.gitkeep
+!patients/deceased/.gitkeep
+!logs/.gitkeep

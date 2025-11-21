@@ -1,0 +1,417 @@
+# ICU Scoring Systems - SOFA, APACHE-II, TURK-SOFA
+# Sequential Organ Failure Assessment and Acute Physiology and Chronic Health Evaluation
+
+sofa:
+  description: "Sequential Organ Failure Assessment - evaluates 6 organ systems"
+  range: 0-24
+  calculation_frequency: "daily"
+
+  components:
+    respiratory:
+      name: "PaO2/FiO2 ratio"
+      unit: "mmHg"
+      scoring:
+        0:
+          pf_ratio_min: 400
+          description: "≥400"
+        1:
+          pf_ratio_min: 300
+          pf_ratio_max: 399
+          description: "<400"
+        2:
+          pf_ratio_min: 200
+          pf_ratio_max: 299
+          description: "<300"
+        3:
+          pf_ratio_min: 100
+          pf_ratio_max: 199
+          description: "<200 with mechanical ventilation"
+          requires_mechanical_ventilation: true
+        4:
+          pf_ratio_max: 99
+          description: "<100 with mechanical ventilation"
+          requires_mechanical_ventilation: true
+
+    coagulation:
+      name: "Platelets"
+      unit: "K/µL"
+      scoring:
+        0:
+          platelet_min: 150
+          description: "≥150"
+        1:
+          platelet_min: 100
+          platelet_max: 149
+          description: "<150"
+        2:
+          platelet_min: 50
+          platelet_max: 99
+          description: "<100"
+        3:
+          platelet_min: 20
+          platelet_max: 49
+          description: "<50"
+        4:
+          platelet_max: 19
+          description: "<20"
+
+    hepatic:
+      name: "Bilirubin"
+      unit: "mg/dL"
+      scoring:
+        0:
+          bilirubin_max: 1.1
+          description: "<1.2"
+        1:
+          bilirubin_min: 1.2
+          bilirubin_max: 1.9
+          description: "1.2-1.9"
+        2:
+          bilirubin_min: 2.0
+          bilirubin_max: 5.9
+          description: "2.0-5.9"
+        3:
+          bilirubin_min: 6.0
+          bilirubin_max: 11.9
+          description: "6.0-11.9"
+        4:
+          bilirubin_min: 12.0
+          description: "≥12.0"
+
+    cardiovascular:
+      name: "Mean Arterial Pressure / Vasopressors"
+      scoring:
+        0:
+          map_min: 70
+          vasopressors: false
+          description: "MAP ≥70 mmHg"
+        1:
+          map_max: 69
+          vasopressors: false
+          description: "MAP <70 mmHg"
+        2:
+          vasopressors: true
+          vasopressor_type: "dopamine"
+          dose_max: 5
+          dose_unit: "mcg/kg/min"
+          description: "Dopamine ≤5 or dobutamine (any dose)"
+          alternatives:
+            - "dobutamine (any dose)"
+        3:
+          vasopressors: true
+          description: "Dopamine >5 OR epinephrine ≤0.1 OR norepinephrine ≤0.1"
+          options:
+            - drug: "dopamine"
+              dose_min: 5.01
+              dose_unit: "mcg/kg/min"
+            - drug: "epinephrine"
+              dose_max: 0.1
+              dose_unit: "mcg/kg/min"
+            - drug: "norepinephrine"
+              dose_max: 0.1
+              dose_unit: "mcg/kg/min"
+        4:
+          vasopressors: true
+          description: "Dopamine >15 OR epinephrine >0.1 OR norepinephrine >0.1"
+          options:
+            - drug: "dopamine"
+              dose_min: 15.01
+              dose_unit: "mcg/kg/min"
+            - drug: "epinephrine"
+              dose_min: 0.11
+              dose_unit: "mcg/kg/min"
+            - drug: "norepinephrine"
+              dose_min: 0.11
+              dose_unit: "mcg/kg/min"
+
+    neurological:
+      name: "Glasgow Coma Scale"
+      scoring:
+        0:
+          gcs: 15
+          description: "15"
+        1:
+          gcs_min: 13
+          gcs_max: 14
+          description: "13-14"
+        2:
+          gcs_min: 10
+          gcs_max: 12
+          description: "10-12"
+        3:
+          gcs_min: 6
+          gcs_max: 9
+          description: "6-9"
+        4:
+          gcs_max: 5
+          description: "<6"
+
+    renal:
+      name: "Creatinine / Urine Output"
+      unit: "mg/dL or mL/day"
+      scoring:
+        0:
+          creatinine_max: 1.1
+          description: "<1.2"
+        1:
+          creatinine_min: 1.2
+          creatinine_max: 1.9
+          description: "1.2-1.9"
+        2:
+          creatinine_min: 2.0
+          creatinine_max: 3.4
+          description: "2.0-3.4"
+        3:
+          description: "3.5-4.9 OR urine output <500 mL/day"
+          options:
+            - creatinine_min: 3.5
+              creatinine_max: 4.9
+            - urine_output_max: 499
+              urine_output_unit: "mL/day"
+        4:
+          description: "≥5.0 OR urine output <200 mL/day"
+          options:
+            - creatinine_min: 5.0
+            - urine_output_max: 199
+              urine_output_unit: "mL/day"
+
+  interpretation:
+    mortality_risk:
+      0-6:
+        mortality: "<10%"
+        severity: "low"
+      7-9:
+        mortality: "15-20%"
+        severity: "moderate"
+      10-12:
+        mortality: "40-50%"
+        severity: "high"
+      13-14:
+        mortality: "50-60%"
+        severity: "very high"
+      15-24:
+        mortality: ">80%"
+        severity: "critical"
+
+  delta_sofa:
+    description: "Change in SOFA score over time"
+    significance:
+      increase_2_points:
+        meaning: "Increased mortality risk"
+        action: "Escalate interventions"
+      increase_3_points:
+        meaning: "Significant deterioration"
+        action: "Consider goals of care discussion"
+      decrease_2_points:
+        meaning: "Improvement"
+        action: "Consider de-escalation"
+
+apache_ii:
+  description: "Acute Physiology and Chronic Health Evaluation II"
+  range: 0-71
+  calculation_timing: "first 24 hours of ICU admission"
+
+  components:
+    acute_physiology_score:
+      range: 0-60
+
+      temperature:
+        unit: "celsius"
+        41_and_above: 4
+        39_to_40_9: 3
+        38_5_to_38_9: 1
+        36_to_38_4: 0
+        34_to_35_9: 1
+        32_to_33_9: 2
+        30_to_31_9: 3
+        below_30: 4
+
+      mean_arterial_pressure:
+        unit: "mmHg"
+        160_and_above: 4
+        130_to_159: 3
+        110_to_129: 2
+        70_to_109: 0
+        50_to_69: 2
+        below_50: 4
+
+      heart_rate:
+        unit: "bpm"
+        180_and_above: 4
+        140_to_179: 3
+        110_to_139: 2
+        70_to_109: 0
+        55_to_69: 2
+        40_to_54: 3
+        below_40: 4
+
+      respiratory_rate:
+        unit: "/min"
+        50_and_above: 4
+        35_to_49: 3
+        25_to_34: 1
+        12_to_24: 0
+        10_to_11: 1
+        6_to_9: 2
+        below_6: 4
+
+      oxygenation:
+        if_fio2_50_or_more:
+          parameter: "A-a gradient"
+          unit: "mmHg"
+          500_and_above: 4
+          350_to_499: 3
+          200_to_349: 2
+          below_200: 0
+        if_fio2_less_than_50:
+          parameter: "PaO2"
+          unit: "mmHg"
+          above_70: 0
+          61_to_70: 1
+          55_to_60: 3
+          below_55: 4
+
+      arterial_ph:
+        7_7_and_above: 4
+        7_6_to_7_69: 3
+        7_5_to_7_59: 1
+        7_33_to_7_49: 0
+        7_25_to_7_32: 2
+        7_15_to_7_24: 3
+        below_7_15: 4
+
+      serum_sodium:
+        unit: "mEq/L"
+        180_and_above: 4
+        160_to_179: 3
+        155_to_159: 2
+        150_to_154: 1
+        130_to_149: 0
+        120_to_129: 2
+        111_to_119: 3
+        below_111: 4
+
+      serum_potassium:
+        unit: "mEq/L"
+        7_and_above: 4
+        6_to_6_9: 3
+        5_5_to_5_9: 1
+        3_5_to_5_4: 0
+        3_to_3_4: 1
+        2_5_to_2_9: 2
+        below_2_5: 4
+
+      serum_creatinine:
+        unit: "mg/dL"
+        double_points_if_acute_renal_failure: true
+        3_5_and_above: 4
+        2_to_3_4: 3
+        1_5_to_1_9: 2
+        0_6_to_1_4: 0
+        below_0_6: 2
+
+      hematocrit:
+        unit: "%"
+        60_and_above: 4
+        50_to_59_9: 2
+        46_to_49_9: 1
+        30_to_45_9: 0
+        20_to_29_9: 2
+        below_20: 4
+
+      white_blood_count:
+        unit: "K/µL"
+        40_and_above: 4
+        20_to_39_9: 2
+        15_to_19_9: 1
+        3_to_14_9: 0
+        1_to_2_9: 2
+        below_1: 4
+
+      glasgow_coma_scale:
+        actual_gcs_minus_15: true
+        example: "GCS 10 scores 5 points (15-10=5)"
+
+    age_points:
+      below_44: 0
+      45_to_54: 2
+      55_to_64: 3
+      65_to_74: 5
+      75_and_above: 6
+
+    chronic_health_points:
+      nonoperative_or_emergency_postoperative: 5
+      elective_postoperative: 2
+      no_chronic_health_problems: 0
+
+      chronic_conditions:
+        - "Immunocompromised"
+        - "Hepatic cirrhosis (biopsy proven)"
+        - "NYHA Class IV heart failure"
+        - "Severe COPD"
+        - "Chronic dialysis"
+
+  interpretation:
+    mortality_risk:
+      0-4:
+        mortality: "4%"
+      5-9:
+        mortality: "8%"
+      10-14:
+        mortality: "15%"
+      15-19:
+        mortality: "25%"
+      20-24:
+        mortality: "40%"
+      25-29:
+        mortality: "55%"
+      30-34:
+        mortality: "75%"
+      35_and_above:
+        mortality: ">85%"
+
+turk_sofa:
+  description: "Turkish adaptation of SOFA for local epidemiology"
+  note: "Similar to SOFA with modifications for Turkish ICU population"
+  modifications:
+    - "Adjusted cardiovascular thresholds for local vasopressor practices"
+    - "Modified GCS interpretation for cultural factors"
+    - "Calibrated to Turkish ICU mortality data"
+
+quick_sofa:
+  description: "Quick SOFA for rapid bedside assessment"
+  criteria:
+    - name: "Altered mental status"
+      definition: "GCS <15"
+      points: 1
+    - name: "Systolic blood pressure"
+      definition: "≤100 mmHg"
+      points: 1
+    - name: "Respiratory rate"
+      definition: "≥22/min"
+      points: 1
+
+  interpretation:
+    score_0_to_1: "Low risk for poor outcomes"
+    score_2_to_3: "Higher risk for poor outcomes - consider sepsis"
+
+  note: "qSOFA ≥2 suggests need for full SOFA assessment"
+
+usage_notes:
+  sofa:
+    - "Calculate daily to monitor organ dysfunction trajectory"
+    - "Baseline SOFA on ICU admission"
+    - "Delta SOFA (change from baseline) is prognostic"
+    - "SOFA increase of ≥2 points defines sepsis-induced organ dysfunction"
+
+  apache_ii:
+    - "Calculate once within first 24 hours of ICU admission"
+    - "Use worst values from first 24 hours"
+    - "Do not recalculate during ICU stay"
+    - "Primarily for research and benchmarking"
+
+  general:
+    - "Scores are decision support tools, not treatment mandates"
+    - "Clinical judgment supersedes scores"
+    - "Trends more important than single values"
+    - "Consider patient goals and values in context of scores"

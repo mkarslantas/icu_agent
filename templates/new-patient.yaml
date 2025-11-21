@@ -1,0 +1,52 @@
+# Patient Demographics Template
+# Copy this file to patients/active/PATIENT_ID/demographics.yaml and fill in
+
+patient:
+  id: PATIENT_ID
+  age:
+  gender:  # M/F
+  admission_date: "YYYY-MM-DD"
+
+anthropometrics:
+  height:  # cm
+  weight:  # kg
+  bmi:
+  ideal_body_weight:  # kg
+
+comorbidities:
+  - type: ""
+    duration_years:
+    controlled: true/false
+    medications: []
+
+past_medical_history: []
+
+past_surgical_history:
+  - procedure: ""
+    year:
+
+medications_home:
+  - name: ""
+    dose: ""
+    frequency: ""
+
+allergies:
+  drug_allergies:
+    - drug: ""
+      reaction: ""
+      severity: "mild|moderate|severe"
+
+social_history:
+  smoking: ""
+  alcohol: ""
+  occupation: ""
+
+family_history:
+  - condition: ""
+    relation: ""
+
+code_status:
+  full_code: true/false
+  documented_date: "YYYY-MM-DD"
+
+notes: []

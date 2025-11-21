@@ -1,0 +1,368 @@
+# Antibiotic Stewardship Guidelines
+# Evidence-based principles for ICU antimicrobial management
+
+principles:
+  core_tenets:
+    - "Right drug, right dose, right duration"
+    - "Early appropriate empiric therapy for sepsis"
+    - "De-escalate based on culture results"
+    - "Shortest effective duration"
+    - "Source control when possible"
+    - "Monitor for adverse effects and drug interactions"
+
+sepsis_initial_management:
+  timing:
+    goal: "Antibiotics within 1 hour of sepsis recognition"
+    evidence: "Each hour delay increases mortality by ~7%"
+
+  empiric_therapy_selection:
+    considerations:
+      - "Likely infection source"
+      - "Local resistance patterns"
+      - "Patient risk factors for resistant organisms"
+      - "Recent antibiotic exposure (<90 days)"
+      - "Recent hospitalization (<90 days)"
+      - "Immunosuppression status"
+      - "Severity of illness"
+
+  broad_spectrum_duration:
+    initial: "Broad empiric coverage appropriate for sepsis"
+    reassess: "Daily reassessment for de-escalation"
+    goal: "Narrow spectrum within 48-72 hours based on cultures"
+
+common_icu_infections:
+  community_acquired_pneumonia:
+    severe_cap:
+      empiric_therapy:
+        option_1: "Beta-lactam + macrolide"
+        examples:
+          - "Ceftriaxone 2g IV q24h + Azithromycin 500mg IV q24h"
+          - "Ampicillin-sulbactam 3g IV q6h + Azithromycin 500mg IV q24h"
+        option_2: "Beta-lactam + respiratory fluoroquinolone"
+        examples:
+          - "Ceftriaxone 2g IV q24h + Levofloxacin 750mg IV q24h"
+
+      if_pseudomonas_risk:
+        risk_factors:
+          - "Structural lung disease (bronchiectasis)"
+          - "Recent antibiotic use"
+          - "Recent hospitalization"
+        therapy:
+          - "Anti-pseudomonal beta-lactam + fluoroquinolone or aminoglycoside"
+          - "Examples: Piperacillin-tazobactam + Levofloxacin"
+
+      duration:
+        typical: "5-7 days if clinically improving"
+        severe: "7 days minimum"
+
+  hospital_acquired_pneumonia:
+    definition: "Pneumonia ≥48 hours after admission"
+
+    empiric_therapy:
+      standard: "Anti-pseudomonal beta-lactam + anti-MRSA coverage"
+      examples:
+        - "Piperacillin-tazobactam 4.5g IV q6h + Vancomycin (dose to trough)"
+        - "Meropenem 1g IV q8h + Linezolid 600mg IV q12h"
+
+      alternative_if_carbapenem_risk:
+        - "Cefepime or Ceftazidime + Vancomycin or Linezolid"
+
+    de_escalation:
+      mrsa_negative: "Stop anti-MRSA agent if cultures negative at 48-72h"
+      pathogen_identified: "Narrow to most specific effective agent"
+
+    duration:
+      standard: "7 days"
+      non_fermenter_or_cavitation: "14 days"
+
+  ventilator_associated_pneumonia:
+    definition: "Pneumonia ≥48 hours after intubation"
+
+    empiric_therapy:
+      same_as: "Hospital-acquired pneumonia"
+      emphasis: "Cover multi-drug resistant organisms based on local antibiogram"
+
+    duration: "7-8 days typically sufficient"
+
+  intra_abdominal_infection:
+    source_control: "MANDATORY - surgery/drainage often required"
+
+    community_acquired:
+      mild_moderate:
+        - "Ceftriaxone + Metronidazole"
+        - "Ertapenem"
+      severe:
+        - "Piperacillin-tazobactam"
+        - "Meropenem"
+
+    hospital_acquired_or_healthcare_associated:
+      empiric:
+        - "Carbapenem (Meropenem/Imipenem)"
+        - "Piperacillin-tazobactam + Aminoglycoside"
+      add_if_risk_factors:
+        enterococcus_coverage: "Add Ampicillin if bile/upper GI"
+        candida_coverage: "Consider fluconazole/echinocandin if recent broad-spectrum antibiotics, recurrent perforation, immunosuppressed"
+
+    duration:
+      with_source_control: "4-7 days post-source control"
+      without_source_control: "Treat until source controlled or patient improves"
+
+  urinary_tract_infection:
+    uncomplicated_pyelonephritis:
+      - "Ceftriaxone 1-2g IV q24h"
+      - "Fluoroquinolone (if local resistance <10%)"
+
+    complicated_uti_urosepsis:
+      empiric:
+        - "Piperacillin-tazobactam 4.5g IV q6h"
+        - "Ceftriaxone 2g IV q24h (if no recent antibiotic use)"
+      if_recent_antibiotics_or_resistant_risk:
+        - "Carbapenem (Meropenem 1g IV q8h)"
+
+    duration: "7-14 days depending on severity and source control"
+
+  skin_soft_tissue_infection:
+    necrotizing_fasciitis:
+      empiric: "Broad-spectrum + clindamycin (toxin suppression)"
+      regimen:
+        - "Piperacillin-tazobactam + Vancomycin + Clindamycin"
+        - "Meropenem + Vancomycin + Clindamycin"
+      source_control: "URGENT surgical debridement"
+      duration: "Continue until no further debridement needed and clinically improving"
+
+    severe_cellulitis:
+      mrsa_risk:
+        - "Vancomycin"
+        - "Linezolid"
+      streptococcal_likely:
+        - "Penicillin G + Clindamycin"
+
+  catheter_related_bloodstream_infection:
+    empiric:
+      - "Vancomycin (for coagulase-negative staph, MRSA)"
+      - "Add gram-negative coverage if septic (Ceftriaxone or Pip-tazo)"
+
+    catheter_management:
+      remove_if:
+        - "Severe sepsis/shock"
+        - "Endocarditis"
+        - "Suppurative thrombophlebitis"
+        - "Tunnel/port pocket infection"
+        - "S. aureus, Pseudomonas, fungi, mycobacteria"
+        - "Persistent bacteremia >72h despite appropriate antibiotics"
+
+      may_retain_with_antibiotic_lock:
+        - "Coagulase-negative staphylococci in non-critical patient"
+        - "Monitor closely for treatment failure"
+
+    duration:
+      coag_neg_staph_catheter_removed: "5-7 days"
+      coag_neg_staph_catheter_retained: "10-14 days"
+      s_aureus_uncomplicated: "14 days minimum (from first negative culture)"
+      s_aureus_complicated: "4-6 weeks"
+      gram_negative: "7-14 days"
+
+resistant_organisms:
+  mrsa:
+    treatment_options:
+      vancomycin:
+        dosing: "15-20 mg/kg IV q8-12h"
+        monitoring: "Trough 15-20 mcg/mL for serious infections"
+        considerations: "First-line for most infections"
+
+      linezolid:
+        dosing: "600mg IV/PO q12h"
+        advantages: "100% bioavailability, good lung penetration"
+        cautions: "Myelosuppression with prolonged use (>14 days), serotonin syndrome risk"
+
+      daptomycin:
+        dosing: "6-10 mg/kg IV q24h"
+        use: "Bacteremia, endocarditis, skin/soft tissue"
+        contraindication: "NOT for pneumonia (inactivated by surfactant)"
+
+      ceftaroline:
+        dosing: "600mg IV q12h"
+        use: "MRSA pneumonia, skin infections"
+        note: "Anti-MRSA cephalosporin"
+
+  esbl_producing_enterobacteriaceae:
+    preferred: "Carbapenem (Meropenem, Imipenem, Ertapenem)"
+    alternative_for_cystitis: "Fosfomycin, Nitrofurantoin"
+    carbapenem_sparing_options:
+      - "Cefepime (for isolates with MIC ≤2)"
+      - "Piperacillin-tazobactam (controversial, use only for UTI)"
+
+  carbapenem_resistant_enterobacteriaceae:
+    consult: "Infectious disease consultation REQUIRED"
+    options:
+      - "Polymyxin B or Colistin"
+      - "Tigecycline"
+      - "Newer agents: Ceftazidime-avibactam, Meropenem-vaborbactam"
+    combination_therapy: "Often used for serious infections"
+
+  pseudomonas_aeruginosa:
+    anti_pseudomonal_beta_lactams:
+      - "Piperacillin-tazobactam 4.5g IV q6h"
+      - "Cefepime 2g IV q8h"
+      - "Ceftazidime 2g IV q8h"
+      - "Meropenem 1g IV q8h"
+      - "Imipenem 500mg IV q6h"
+
+    combination_therapy:
+      indication: "Severe infections, septic shock, neutropenia"
+      add: "Aminoglycoside or fluoroquinolone to beta-lactam"
+      duration: "Combination for 5-7 days, then step down to monotherapy"
+
+de_escalation_strategy:
+  culture_results_available:
+    pathogen_identified:
+      action: "Narrow to most specific effective agent"
+      example: "MSSA bacteremia → change Vancomycin to Cefazolin"
+
+    no_growth_at_48_72_hours:
+      if_clinically_improving:
+        action: "Consider stopping antibiotics or narrowing spectrum"
+        reassess: "Was infection diagnosis correct?"
+      if_not_improving:
+        action: "Continue empiric therapy, search for other causes"
+
+  procalcitonin_guided_therapy:
+    indication: "May guide antibiotic duration in respiratory infections"
+    algorithm:
+      - "Measure baseline PCT"
+      - "Stop antibiotics when PCT decreases ≥80% from peak or <0.5 ng/mL"
+    caution: "Use as adjunct to clinical judgment, not sole criterion"
+
+duration_of_therapy:
+  general_principles:
+    - "Shorter courses (5-7 days) appropriate for most infections if source controlled"
+    - "Longer courses for deep-seated infections, immunocompromised, slow response"
+
+  specific_durations:
+    uncomplicated_gram_negative_bacteremia: "7-14 days"
+    s_aureus_bacteremia_uncomplicated: "14 days (from first negative blood culture)"
+    s_aureus_bacteremia_complicated: "4-6 weeks"
+    pneumonia_community_acquired: "5-7 days"
+    pneumonia_hospital_acquired: "7 days"
+    intra_abdominal_with_source_control: "4-7 days post-op"
+    febrile_neutropenia: "Until neutrophil recovery and afebrile 48h"
+
+dosing_optimization:
+  extended_infusion_beta_lactams:
+    indication: "Severe infections, resistant organisms"
+    method:
+      piperacillin_tazobactam: "4.5g IV over 4 hours q8h"
+      meropenem: "1g IV over 3 hours q8h or 2g IV over 3 hours q8h"
+    rationale: "Maximizes time above MIC (time-dependent killing)"
+
+  loading_doses:
+    vancomycin:
+      loading: "25-30 mg/kg IV once"
+      indication: "Severe infections requiring rapid therapeutic levels"
+
+    aminoglycosides:
+      extended_interval: "5-7 mg/kg IV q24h"
+      indication: "Once daily dosing for most infections (not endocarditis)"
+
+  renal_dose_adjustment:
+    required_for:
+      - "Vancomycin"
+      - "Aminoglycosides"
+      - "Beta-lactams"
+      - "Fluoroquinolones"
+    consult: "Pharmacist for complex dosing or CRRT"
+
+monitoring:
+  clinical_response:
+    assess_daily:
+      - "Fever resolution"
+      - "Hemodynamic stability"
+      - "White blood cell trend"
+      - "Inflammatory markers (CRP, PCT if used)"
+      - "Clinical improvement"
+
+  therapeutic_drug_monitoring:
+    vancomycin:
+      trough: "15-20 mcg/mL for serious infections"
+      frequency: "Before 4th dose, then weekly if stable"
+
+    aminoglycosides:
+      random_level: "If extended-interval dosing"
+      peak_trough: "If traditional dosing (rarely used)"
+
+  adverse_effects:
+    monitor_for:
+      all_antibiotics: "Rash, drug fever, Clostridioides difficile"
+      beta_lactams: "Seizures (high doses, renal impairment), cytopenias"
+      vancomycin: "Nephrotoxicity, ototoxicity, Red Man Syndrome"
+      linezolid: "Thrombocytopenia, neuropathy, lactic acidosis"
+      fluoroquinolones: "QT prolongation, tendinopathy, CNS effects"
+      aminoglycosides: "Nephrotoxicity, ototoxicity"
+
+special_situations:
+  clostridioides_difficile_infection:
+    mild_moderate:
+      first_line: "Vancomycin 125mg PO q6h x 10 days"
+      alternative: "Fidaxomicin 200mg PO q12h x 10 days"
+
+    severe:
+      definition: "WBC >15K or Cr >1.5x baseline"
+      treatment: "Vancomycin 125mg PO q6h x 10 days"
+
+    fulminant:
+      definition: "Hypotension, shock, ileus, megacolon"
+      treatment:
+        - "Vancomycin 500mg PO q6h PLUS Metronidazole 500mg IV q8h"
+        - "Consider vancomycin enema if ileus"
+        - "Surgical consultation"
+
+  fungal_infections:
+    candidemia:
+      empiric: "Echinocandin (Caspofungin, Micafungin, Anidulafungin)"
+      source_control: "Remove all central lines if possible"
+      ophthalmology_consult: "Rule out endophthalmitis"
+      duration: "14 days from first negative blood culture and resolution of symptoms"
+      step_down: "Can switch to fluconazole if susceptible and clinically stable"
+
+stewardship_interventions:
+  prospective_audit_and_feedback:
+    - "ID or pharmacy review of broad-spectrum antibiotics at 48-72h"
+    - "Recommendations for de-escalation, duration, dosing"
+
+  formulary_restriction:
+    - "Require approval for high-tier agents (carbapenems, anti-MRSA, antifungals)"
+
+  clinical_pathways:
+    - "Standardized empiric regimens for common infections"
+
+  education:
+    - "Regular updates on local resistance patterns"
+    - "Antibiogram distribution"
+    - "Case-based teaching"
+
+red_flags_requiring_id_consultation:
+  - "Multi-drug resistant organisms (MDRO)"
+  - "Fungemia"
+  - "Endocarditis"
+  - "Osteomyelitis"
+  - "CNS infections"
+  - "Persistent bacteremia despite appropriate therapy"
+  - "Immunocompromised host with severe infection"
+  - "Unclear source of infection"
+  - "Need for prolonged antibiotic therapy"
+
+evidence_base:
+  key_guidelines:
+    - "Surviving Sepsis Campaign 2021"
+    - "IDSA/ATS Community-Acquired Pneumonia Guidelines"
+    - "IDSA/ATS Hospital-Acquired/Ventilator-Associated Pneumonia Guidelines"
+    - "IDSA Intra-Abdominal Infection Guidelines"
+    - "IDSA Candidiasis Guidelines"
+
+clinical_pearls:
+  - "Empiric antibiotics should be broad; definitive therapy should be narrow"
+  - "Cultures before antibiotics when possible, but don't delay treatment for sepsis"
+  - "Failure to improve by 72h prompts reassessment, not automatic antibiotic change"
+  - "Most ICU infections can be treated with 7 days or less if source controlled"
+  - "Double coverage for Pseudomonas is for severe illness, not routine"
+  - "Stop antibiotics when infection is ruled out - don't 'complete the course'"

@@ -1,0 +1,176 @@
+# Vasopressor and Inotrope Database
+
+norepinephrine:
+  class: "Catecholamine"
+  mechanism: "Alpha-1 >> Beta-1 agonist"
+  effects:
+    vasoconstriction: "++++"
+    inotropy: "+"
+    chronotropy: "0/+"
+  dosing:
+    initial: "0.05-0.1 mcg/kg/min"
+    usual_range: "0.05-0.5 mcg/kg/min"
+    maximum: "3 mcg/kg/min (but consider adding agents >0.5)"
+    unit: "mcg/kg/min"
+  administration:
+    route: "Central line preferred"
+    compatibility: "Compatible with most solutions"
+    concentration: "4-32 mg in 250 mL (16-128 mcg/mL)"
+  monitoring:
+    - "MAP (target ≥65 mmHg)"
+    - "Heart rate"
+    - "Lactate"
+    - "Urine output"
+    - "Extremity perfusion"
+  adverse_effects:
+    - "Arrhythmias"
+    - "Tissue ischemia/necrosis (extravasation)"
+    - "Decreased splanchnic perfusion"
+    - "Hyperglycemia"
+  evidence: "First-line agent for septic shock (SSC 2021)"
+
+epinephrine:
+  class: "Catecholamine"
+  mechanism: "Alpha-1, Beta-1, Beta-2 agonist"
+  effects:
+    vasoconstriction: "+++"
+    inotropy: "++++"
+    chronotropy: "+++"
+  dosing:
+    initial: "0.05 mcg/kg/min"
+    usual_range: "0.05-0.5 mcg/kg/min"
+    maximum: "2 mcg/kg/min"
+    unit: "mcg/kg/min"
+  administration:
+    route: "Central line required"
+    concentration: "4-8 mg in 250 mL"
+  monitoring:
+    - "MAP"
+    - "Heart rate (risk of tachycardia)"
+    - "Lactate (may increase Type B lactate)"
+    - "ECG (arrhythmias)"
+  adverse_effects:
+    - "Tachycardia, arrhythmias"
+    - "Increased myocardial oxygen demand"
+    - "Type B lactic acidosis"
+    - "Hyperglycemia"
+    - "Hypokalemia"
+  indications:
+    - "Anaphylactic shock"
+    - "Refractory septic shock"
+    - "Cardiac arrest"
+  cautions: "May increase lactate independent of tissue hypoperfusion"
+
+vasopressin:
+  class: "Peptide hormone"
+  mechanism: "V1 receptor agonist (vasoconstriction)"
+  effects:
+    vasoconstriction: "+++"
+    inotropy: "0"
+    chronotropy: "0"
+  dosing:
+    fixed_dose: "0.03-0.04 units/min"
+    note: "NOT titrated"
+    unit: "units/min"
+  administration:
+    route: "Peripheral or central"
+    concentration: "20-100 units in 100-250 mL"
+  monitoring:
+    - "MAP"
+    - "Urine output (has antidiuretic effect)"
+    - "Extremity perfusion (risk of ischemia)"
+  adverse_effects:
+    - "Digital/mesenteric ischemia"
+    - "Hyponatremia (SIADH)"
+    - "Decreased cardiac output"
+    - "Coronary vasoconstriction"
+  indications:
+    - "Add-on to norepinephrine in septic shock"
+    - "Allows norepinephrine dose reduction"
+  evidence: "VASST trial - catecholamine-sparing, no mortality benefit"
+
+dopamine:
+  class: "Catecholamine"
+  mechanism: "Dose-dependent dopaminergic, beta, alpha effects"
+  effects:
+    low_dose: "1-5 mcg/kg/min (dopaminergic - renal)"
+    medium_dose: "5-10 mcg/kg/min (beta - inotropic)"
+    high_dose: ">10 mcg/kg/min (alpha - vasopressor)"
+  dosing:
+    usual_range: "2-20 mcg/kg/min"
+    unit: "mcg/kg/min"
+  administration:
+    route: "Central line preferred"
+  adverse_effects:
+    - "Tachycardia, arrhythmias (more than NE)"
+    - "Tissue necrosis if extravasation"
+    - "May suppress T-cell function"
+  evidence: "Inferior to norepinephrine (higher arrhythmia rate)"
+  note: "NOT recommended as first-line in septic shock"
+
+dobutamine:
+  class: "Synthetic catecholamine"
+  mechanism: "Beta-1 > Beta-2 agonist"
+  effects:
+    vasoconstriction: "0 (may cause vasodilation)"
+    inotropy: "++++"
+    chronotropy: "++"
+  dosing:
+    usual_range: "2.5-20 mcg/kg/min"
+    unit: "mcg/kg/min"
+  administration:
+    route: "Central or peripheral"
+  indications:
+    - "Cardiogenic shock"
+    - "Septic shock with myocardial dysfunction"
+    - "Augment cardiac output when hypoperfusion despite adequate MAP"
+  monitoring:
+    - "Cardiac output/index"
+    - "Blood pressure (may drop)"
+    - "Heart rate"
+    - "Mixed venous O2 saturation"
+  adverse_effects:
+    - "Hypotension"
+    - "Tachycardia, arrhythmias"
+    - "Increased myocardial oxygen demand"
+  caution: "Do NOT use as sole vasopressor - use with norepinephrine"
+
+phenylephrine:
+  class: "Synthetic catecholamine"
+  mechanism: "Pure alpha-1 agonist"
+  effects:
+    vasoconstriction: "++++"
+    inotropy: "0"
+    chronotropy: "0 (may cause reflex bradycardia)"
+  dosing:
+    usual_range: "0.5-3 mcg/kg/min"
+    unit: "mcg/kg/min"
+  indications:
+    - "Hypotension with tachyarrhythmias"
+    - "Norepinephrine shortage"
+  limitations:
+    - "May decrease cardiac output"
+    - "Less effective than norepinephrine in sepsis"
+  evidence: "Inferior to norepinephrine for septic shock"
+
+combination_therapy:
+  rationale: "Avoid excessive doses of single agent"
+  common_combinations:
+    - combination: "Norepinephrine + Vasopressin"
+      indication: "Septic shock requiring high-dose NE"
+      benefit: "NE-sparing effect"
+    - combination: "Norepinephrine + Dobutamine"
+      indication: "Septic shock with myocardial dysfunction"
+      benefit: "Maintain MAP and augment cardiac output"
+    - combination: "Norepinephrine + Epinephrine"
+      indication: "Refractory shock"
+      benefit: "Additional vasoconstriction and inotropy"
+
+general_principles:
+  - "Norepinephrine is first-line for septic shock"
+  - "Adequate fluid resuscitation before/concurrent with vasopressors"
+  - "Target MAP ≥65 mmHg (may need higher in chronic HTN)"
+  - "Add second agent rather than excessive single agent dose"
+  - "Wean gradually when improving"
+  - "Monitor for adverse effects (arrhythmias, ischemia)"
+  - "Central line preferred for most agents"

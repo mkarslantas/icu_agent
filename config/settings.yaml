@@ -1,0 +1,185 @@
+# ICU Monitoring System - Global Settings
+
+system:
+  name: "ICU Patient Monitoring System"
+  version: "1.0.0"
+  description: "AI-powered clinical decision support for intensive care"
+  locale: "tr_TR"
+  timezone: "Europe/Istanbul"
+
+clinical:
+  default_weight_kg: 70
+  default_height_cm: 170
+
+  alerts:
+    critical_values_notification: true
+    trend_deterioration_warning: true
+    antibiotic_duration_reminder: true
+    weaning_readiness_check: true
+
+  scoring:
+    calculate_sofa_daily: true
+    calculate_apache_on_admission: true
+    delta_sofa_threshold_for_alert: 2
+
+  reports:
+    daily_assessment: true
+    weekly_summary: true
+    automatic_discharge_summary: false
+
+parsing:
+  language: "turkish"
+  number_conversion: true
+  trend_detection: true
+  confidence_threshold: "medium"
+
+  turkish_number_formats:
+    decimal_separators:
+      - "nokta"
+      - "virgül"
+    fraction_expressions:
+      bir_buçuk: 1.5
+      iki_buçuk: 2.5
+      üç_buçuk: 3.5
+
+  medical_terminology:
+    accept_both_turkish_and_english: true
+    normalize_drug_names: true
+    recognize_abbreviations: true
+
+data_management:
+  patient_data_location: "patients/"
+  backup_frequency: "daily"
+  retention_policy:
+    active_patients: "indefinite"
+    discharged_patients: "5 years"
+    logs: "90 days"
+
+  privacy:
+    anonymize_examples: true
+    encrypt_patient_identifiers: false
+    audit_log: true
+
+file_organization:
+  structured_data_format: "json"
+  reports_format: "markdown"
+  date_format: "YYYY-MM-DD"
+  datetime_format: "YYYY-MM-DD HH:MM"
+
+  naming_conventions:
+    notes: "YYYY-MM-DD.txt"
+    structured: "YYYY-MM-DD.json"
+    reports: "YYYY-MM-DD_assessment.md"
+
+ai_model:
+  preferred_model: "claude-sonnet-4"
+  temperature: 0.1
+  max_tokens: 4000
+
+  prompts:
+    system_role: "expert ICU physician"
+    output_format: "structured JSON or markdown as specified"
+    language: "Turkish for clinical reports, English for data structures"
+
+workflows:
+  daily_routine:
+    - step: "Parse new clinical note"
+      prompt: "prompts/core/01-parse-note.md"
+    - step: "Calculate scores"
+      prompt: "prompts/analysis/13-calculate-scores.md"
+    - step: "Generate daily assessment"
+      prompt: "prompts/reports/30-daily-report.md"
+
+  weekly_review:
+    - step: "Analyze 7-day trends"
+      prompt: "prompts/analysis/11-trend-analysis.md"
+    - step: "Generate weekly summary"
+      prompt: "prompts/reports/31-weekly-summary.md"
+
+  recommendations:
+    vasopressor_management: "prompts/recommendations/20-vasopressor-mgmt.md"
+    ventilator_weaning: "prompts/recommendations/21-ventilator-weaning.md"
+    antibiotic_stewardship: "prompts/recommendations/22-antibiotic-steward.md"
+
+thresholds:
+  critical_alerts:
+    map_low: 65
+    lactate_high: 4.0
+    gcs_low: 8
+    spo2_low: 90
+    urine_output_low_ml_kg_hr: 0.5
+
+  trend_alerts:
+    vasopressor_increase_threshold_mcg_kg_min: 0.05
+    lactate_increase_threshold_mmol_l: 1.0
+    creatinine_increase_threshold_mg_dl: 0.5
+
+  weaning_readiness:
+    pf_ratio_min: 200
+    peep_max: 8
+    fio2_max: 50
+    map_min: 65
+    gcs_min: 13
+
+display:
+  use_emojis_in_reports: true
+  color_coding: false
+  trend_indicators:
+    improving: "↓"
+    worsening: "↑"
+    stable: "→"
+
+  severity_indicators:
+    urgent: "🚨"
+    important: "⚠️"
+    routine: "📌"
+
+integration:
+  external_systems:
+    ehr_integration: false
+    lab_interface: false
+    pacs_integration: false
+
+  export:
+    formats:
+      - "json"
+      - "markdown"
+      - "pdf"
+    destinations:
+      - "local_filesystem"
+
+compliance:
+  hipaa_mode: false
+  gdpr_mode: false
+  local_regulations: "Turkey Health Data Protection"
+
+  disclaimer_text: |
+    This system provides clinical decision support only.
+    All recommendations must be reviewed and approved by qualified healthcare professionals.
+    Not intended for diagnostic purposes.
+    Not FDA approved or CE marked.
+
+development:
+  debug_mode: false
+  verbose_logging: false
+  test_mode: false
+
+  test_patients:
+    - "HT001"
+
+documentation:
+  readme: "README.md"
+  setup_guide: "docs/SETUP.md"
+  usage_guide: "docs/USAGE.md"
+  clinical_guidelines: "docs/CLINICAL_GUIDELINES.md"
+  troubleshooting: "docs/TROUBLESHOOTING.md"
+
+support:
+  repository: "https://github.com/yourusername/icu-monitoring-system"
+  issues: "https://github.com/yourusername/icu-monitoring-system/issues"
+  documentation: "https://github.com/yourusername/icu-monitoring-system/wiki"
+
+updates:
+  check_for_updates: true
+  auto_update: false
+  update_channel: "stable"
