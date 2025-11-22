@@ -3,9 +3,9 @@ Report Supervisor
 
 This supervisor coordinates the report generation workflow:
 1. Report Generator - creates comprehensive Turkish daily report
-2. (Future: Alert Generator - creates summary alerts for critical values)
+2. Alert Generator - creates prioritized clinical alerts
 
-Runs sequentially to ensure report has access to all analysis results.
+Runs sequentially to ensure each component has access to all analysis results.
 """
 
 import logging
@@ -14,6 +14,7 @@ from typing import Any, Dict, List
 from agents.base.supervisor import BaseSupervisor
 from agents.base.state import StateManager
 from agents.workers.report_generator import ReportGeneratorAgent
+from agents.workers.alert_generator import AlertGeneratorAgent
 
 logger = logging.getLogger(__name__)
 
@@ -28,10 +29,13 @@ class ReportSupervisor(BaseSupervisor):
        - Includes historical trend analysis
        - Provides specific actionable recommendations
 
-    2. (Future) AlertGenerator creates summary alerts if critical values exist
+    2. AlertGenerator creates prioritized clinical alerts
+       - Reviews critical values and trends
+       - Categorizes by urgency (immediate, urgent, monitor)
+       - Provides specific intervention recommendations
 
     Configuration:
-    - parallel=False (sequential execution)
+    - parallel=False (sequential execution - report first, then alerts)
     - critical_workers=["ReportGenerator"] - must succeed
     """
 
@@ -48,13 +52,13 @@ class ReportSupervisor(BaseSupervisor):
 
         # Create workers
         report_generator = ReportGeneratorAgent(state_manager, agent_config)
+        alert_generator = AlertGeneratorAgent(state_manager, agent_config)
 
-        workers = [report_generator]
-        # Future: Add AlertGeneratorAgent here
+        workers = [report_generator, alert_generator]
 
         # Supervisor configuration
         supervisor_config = {
-            "parallel": False,  # Sequential execution
+            "parallel": False,  # Sequential execution (report first, then alerts)
             "max_workers": 1,
             "stop_on_error": True,  # Stop if report generation fails
             "critical_workers": ["ReportGenerator"],  # Must succeed
@@ -67,7 +71,7 @@ class ReportSupervisor(BaseSupervisor):
             config=supervisor_config
         )
 
-        logger.info("Initialized ReportSupervisor with 1 worker")
+        logger.info("Initialized ReportSupervisor with 2 workers (ReportGenerator + AlertGenerator)")
 
     def prepare_context(self) -> Dict[str, Any]:
         """
@@ -317,3 +321,62 @@ class ReportSupervisor(BaseSupervisor):
         except Exception as e:
             logger.error(f"Failed to save report to {output_path}: {e}")
             return False
+
+    def get_all_alerts(self) -> List[Dict[str, Any]]:
+        """
+        Get all generated alerts from the most recent run.
+
+        Returns:
+            List of alert dictionaries or empty list
+        """
+        alerts_state = self.state_manager.load("alerts")
+        if not alerts_state:
+            return []
+
+        try:
+            data = self._load_phase_json("alerts")
+            if not data:
+                return []
+
+            return data.get("alerts", [])
+
+        except Exception as e:
+            logger.error(f"Failed to load alerts: {e}")
+            return []
+
+    def get_immediate_alerts(self) -> List[Dict[str, Any]]:
+        """
+        Get immediate priority alerts only.
+
+        Returns:
+            List of immediate alert dictionaries
+        """
+        all_alerts = self.get_all_alerts()
+        return [a for a in all_alerts if a.get("urgency") == "immediate"]
+
+    def get_alerts_summary(self) -> Dict[str, Any]:
+        """
+        Get alerts summary from the most recent run.
+
+        Returns:
+            Summary dictionary with alert counts by urgency and category
+        """
+        alerts_state = self.state_manager.load("alerts")
+        if not alerts_state:
+            return {
+                "total_alerts": 0,
+                "immediate_count": 0,
+                "urgent_count": 0,
+                "monitor_count": 0
+            }
+
+        try:
+            data = self._load_phase_json("alerts")
+            if not data:
+                return {}
+
+            return data.get("summary", {})
+
+        except Exception as e:
+            logger.error(f"Failed to load alerts summary: {e}")
+            return {}

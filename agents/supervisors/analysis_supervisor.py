@@ -16,6 +16,7 @@ from agents.base.supervisor import BaseSupervisor
 from agents.base.state import StateManager
 from agents.workers.critical_checker import CriticalCheckerAgent
 from agents.workers.sofa_calculator import SofaCalculatorAgent
+from agents.workers.trend_analyzer import TrendAnalyzerAgent
 
 logger = logging.getLogger(__name__)
 
@@ -26,9 +27,9 @@ class AnalysisSupervisor(BaseSupervisor):
 
     Workflow:
     1. All agents run in parallel for efficiency:
+       - TrendAnalyzer: Analyzes multi-day parameter trends
        - CriticalChecker: Identifies critical values
        - SofaCalculator: Calculates SOFA score and mortality risk
-       - (Future: TrendAnalyzer for multi-day trend analysis)
 
     Configuration:
     - parallel=True for maximum efficiency
@@ -49,8 +50,9 @@ class AnalysisSupervisor(BaseSupervisor):
         # Create workers
         critical_checker = CriticalCheckerAgent(state_manager, agent_config)
         sofa_calculator = SofaCalculatorAgent(state_manager, agent_config)
+        trend_analyzer = TrendAnalyzerAgent(state_manager, agent_config)
 
-        workers = [critical_checker, sofa_calculator]
+        workers = [critical_checker, sofa_calculator, trend_analyzer]
 
         # Supervisor configuration
         supervisor_config = {
@@ -67,7 +69,7 @@ class AnalysisSupervisor(BaseSupervisor):
             config=supervisor_config
         )
 
-        logger.info("Initialized AnalysisSupervisor with 2 workers")
+        logger.info("Initialized AnalysisSupervisor with 3 workers (including TrendAnalyzer)")
 
     def prepare_context(self) -> Dict[str, Any]:
         """
@@ -287,3 +289,45 @@ class AnalysisSupervisor(BaseSupervisor):
                 return True
 
         return False
+
+    def get_concerning_trends(self) -> List[Dict[str, Any]]:
+        """
+        Get concerning trends from the most recent trend analysis.
+
+        Returns:
+            List of concerning trend dictionaries or empty list
+        """
+        trends_state = self.state_manager.load("trends")
+        if not trends_state:
+            return []
+
+        try:
+            data = self._load_phase_json("trends")
+            if not data:
+                return []
+
+            return data.get("concerning_trends", [])
+        except Exception as e:
+            logger.error(f"Failed to load concerning trends: {e}")
+            return []
+
+    def get_trend_summary(self) -> Dict[str, Any]:
+        """
+        Get trend analysis summary from the most recent analysis.
+
+        Returns:
+            Summary dictionary or empty dict
+        """
+        trends_state = self.state_manager.load("trends")
+        if not trends_state:
+            return {}
+
+        try:
+            data = self._load_phase_json("trends")
+            if not data:
+                return {}
+
+            return data.get("summary", {})
+        except Exception as e:
+            logger.error(f"Failed to load trend summary: {e}")
+            return {}
