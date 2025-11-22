@@ -1,0 +1,247 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - ICU Agent{% endblock %}
+
+{% block content %}
+<!-- System Statistics -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title mb-0">Active Patients</h6>
+                        <h2 class="mb-0" id="stat-active-patients">--</h2>
+                    </div>
+                    <i class="bi bi-people-fill" style="font-size: 3rem; opacity: 0.3;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-danger text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title mb-0">Immediate Alerts</h6>
+                        <h2 class="mb-0" id="stat-immediate-alerts">--</h2>
+                    </div>
+                    <i class="bi bi-exclamation-triangle-fill" style="font-size: 3rem; opacity: 0.3;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-warning text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title mb-0">Critical Values</h6>
+                        <h2 class="mb-0" id="stat-critical-values">--</h2>
+                    </div>
+                    <i class="bi bi-activity" style="font-size: 3rem; opacity: 0.3;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title mb-0">High SOFA (≥10)</h6>
+                        <h2 class="mb-0" id="stat-high-sofa">--</h2>
+                    </div>
+                    <i class="bi bi-clipboard-data-fill" style="font-size: 3rem; opacity: 0.3;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Patients Table -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-people-fill"></i> Active Patients
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover" id="patients-table">
+                        <thead>
+                            <tr>
+                                <th>Patient ID</th>
+                                <th>Age</th>
+                                <th>Gender</th>
+                                <th>SOFA Score</th>
+                                <th>Critical Values</th>
+                                <th>Immediate Alerts</th>
+                                <th>Last Update</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="patients-tbody">
+                            <tr>
+                                <td colspan="9" class="text-center">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+// Auto-refresh interval (30 seconds)
+const REFRESH_INTERVAL = 30000;
+let refreshTimer = null;
+
+// Load system stats
+async function loadStats() {
+    try {
+        const response = await fetch('/api/stats');
+        const data = await response.json();
+
+        document.getElementById('stat-active-patients').textContent = data.active_patients || 0;
+        document.getElementById('stat-immediate-alerts').textContent = data.total_immediate_alerts || 0;
+        document.getElementById('stat-critical-values').textContent = data.total_critical_values || 0;
+        document.getElementById('stat-high-sofa').textContent = data.high_sofa_patients || 0;
+
+        // Update alert badge
+        document.getElementById('alert-badge').textContent = data.total_immediate_alerts || 0;
+    } catch (error) {
+        console.error('Error loading stats:', error);
+    }
+}
+
+// Load patients list
+async function loadPatients() {
+    try {
+        const response = await fetch('/api/patients');
+        const data = await response.json();
+
+        const tbody = document.getElementById('patients-tbody');
+        tbody.innerHTML = '';
+
+        if (data.patients.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="9" class="text-center">No patients found</td></tr>';
+            return;
+        }
+
+        data.patients.forEach(patient => {
+            const row = createPatientRow(patient);
+            tbody.appendChild(row);
+        });
+
+        updateTimestamp();
+    } catch (error) {
+        console.error('Error loading patients:', error);
+        const tbody = document.getElementById('patients-tbody');
+        tbody.innerHTML = '<tr><td colspan="9" class="text-center text-danger">Error loading patients</td></tr>';
+    }
+}
+
+// Create patient table row
+function createPatientRow(patient) {
+    const tr = document.createElement('tr');
+
+    // SOFA score badge color
+    let sofaBadgeClass = 'bg-success';
+    if (patient.sofa_score >= 15) sofaBadgeClass = 'bg-danger';
+    else if (patient.sofa_score >= 10) sofaBadgeClass = 'bg-warning';
+    else if (patient.sofa_score >= 5) sofaBadgeClass = 'bg-info';
+
+    // Status badge
+    let statusBadge = '<span class="badge bg-secondary">No Data</span>';
+    if (patient.status === 'active') {
+        if (patient.immediate_alerts > 0) {
+            statusBadge = '<span class="badge bg-danger"><i class="bi bi-exclamation-triangle-fill"></i> Critical</span>';
+        } else if (patient.critical_count > 0) {
+            statusBadge = '<span class="badge bg-warning">Warning</span>';
+        } else {
+            statusBadge = '<span class="badge bg-success">Stable</span>';
+        }
+    }
+
+    tr.innerHTML = `
+        <td><strong>${patient.patient_id}</strong></td>
+        <td>${patient.age || '--'}</td>
+        <td>${patient.gender || '--'}</td>
+        <td>
+            ${patient.sofa_score >= 0
+                ? `<span class="badge ${sofaBadgeClass}">${patient.sofa_score}/24</span>`
+                : '--'}
+        </td>
+        <td>
+            ${patient.critical_count > 0
+                ? `<span class="badge bg-warning">${patient.critical_count}</span>`
+                : '<span class="text-muted">0</span>'}
+        </td>
+        <td>
+            ${patient.immediate_alerts > 0
+                ? `<span class="badge bg-danger">${patient.immediate_alerts}</span>`
+                : '<span class="text-muted">0</span>'}
+        </td>
+        <td>${patient.last_update || '--'}</td>
+        <td>${statusBadge}</td>
+        <td>
+            <a href="/patient/${patient.patient_id}" class="btn btn-sm btn-primary">
+                <i class="bi bi-eye"></i> View
+            </a>
+        </td>
+    `;
+
+    return tr;
+}
+
+// Update timestamp
+function updateTimestamp() {
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString('tr-TR');
+    document.querySelector('#last-update .timestamp').textContent = timeStr;
+}
+
+// Refresh all data
+function refreshData() {
+    loadStats();
+    loadPatients();
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+    refreshData();
+
+    // Set up auto-refresh
+    refreshTimer = setInterval(refreshData, REFRESH_INTERVAL);
+
+    // Manual refresh button
+    document.getElementById('refresh-btn').addEventListener('click', (e) => {
+        e.preventDefault();
+        refreshData();
+
+        // Visual feedback
+        const icon = e.currentTarget.querySelector('i');
+        icon.classList.add('rotate');
+        setTimeout(() => icon.classList.remove('rotate'), 1000);
+    });
+});
+
+// Cleanup on page unload
+window.addEventListener('beforeunload', () => {
+    if (refreshTimer) {
+        clearInterval(refreshTimer);
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+
+{% block title %}Alerts - ICU Agent{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2><i class="bi bi-exclamation-triangle-fill"></i> Active Alerts</h2>
+    </div>
+</div>
+
+<!-- Alert Stats -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card bg-danger text-white">
+            <div class="card-body">
+                <h6 class="card-title">Immediate (ACİL)</h6>
+                <h2 class="mb-0" id="immediate-count">--</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-warning text-white">
+            <div class="card-body">
+                <h6 class="card-title">Urgent (ÖNEMLİ)</h6>
+                <h2 class="mb-0" id="urgent-count">--</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <h6 class="card-title">Monitor (TAKİP)</h6>
+                <h2 class="mb-0" id="monitor-count">--</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Alerts List -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-bell-fill"></i> All Alerts</h5>
+                <div>
+                    <select class="form-select form-select-sm" id="urgency-filter">
+                        <option value="all">All Urgencies</option>
+                        <option value="immediate">Immediate Only</option>
+                        <option value="urgent">Urgent Only</option>
+                        <option value="monitor">Monitor Only</option>
+                    </select>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="alerts-list">
+                    <div class="text-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+let allAlerts = [];
+
+// Load alerts
+async function loadAlerts() {
+    try {
+        const response = await fetch('/api/alerts');
+        const data = await response.json();
+
+        allAlerts = data.alerts || [];
+
+        // Update counts
+        document.getElementById('immediate-count').textContent = data.immediate_count || 0;
+        document.getElementById('urgent-count').textContent = data.urgent_count || 0;
+        document.getElementById('monitor-count').textContent = data.monitor_count || 0;
+
+        // Update badge
+        document.getElementById('alert-badge').textContent = data.immediate_count || 0;
+
+        // Display alerts
+        displayAlerts();
+
+    } catch (error) {
+        console.error('Error loading alerts:', error);
+        document.getElementById('alerts-list').innerHTML =
+            '<p class="text-danger text-center">Error loading alerts</p>';
+    }
+}
+
+// Display alerts with filter
+function displayAlerts() {
+    const filter = document.getElementById('urgency-filter').value;
+    const container = document.getElementById('alerts-list');
+
+    let filteredAlerts = allAlerts;
+    if (filter !== 'all') {
+        filteredAlerts = allAlerts.filter(a => a.urgency === filter);
+    }
+
+    if (filteredAlerts.length === 0) {
+        container.innerHTML = '<p class="text-center text-muted">No alerts to display</p>';
+        return;
+    }
+
+    container.innerHTML = '';
+
+    filteredAlerts.forEach(alert => {
+        const urgencyClass = {
+            'immediate': 'danger',
+            'urgent': 'warning',
+            'monitor': 'info'
+        }[alert.urgency] || 'secondary';
+
+        const urgencyText = {
+            'immediate': 'ACİL',
+            'urgent': 'ÖNEMLİ',
+            'monitor': 'TAKİP'
+        }[alert.urgency] || alert.urgency;
+
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${urgencyClass} mb-3`;
+        alertDiv.innerHTML = `
+            <div class="d-flex justify-content-between align-items-start">
+                <div class="flex-grow-1">
+                    <h6 class="alert-heading mb-2">
+                        <span class="badge bg-${urgencyClass}">${urgencyText}</span>
+                        <span class="badge bg-secondary">${alert.category || 'general'}</span>
+                        ${alert.title}
+                    </h6>
+                    <p class="mb-2"><strong>Patient:</strong> <a href="/patient/${alert.patient_id}">${alert.patient_id}</a></p>
+                    <p class="mb-2">${alert.description}</p>
+                    <div class="border-start border-3 border-${urgencyClass} ps-3 mb-2">
+                        <strong>Öneri:</strong><br>
+                        ${alert.recommendation.replace(/\n/g, '<br>')}
+                    </div>
+                    <small class="text-muted">
+                        <i class="bi bi-clock"></i> ${alert.timestamp || alert.date}
+                        ${alert.alert_id ? `| ID: ${alert.alert_id}` : ''}
+                    </small>
+                </div>
+            </div>
+        `;
+        container.appendChild(alertDiv);
+    });
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+    loadAlerts();
+
+    // Filter change event
+    document.getElementById('urgency-filter').addEventListener('change', displayAlerts);
+
+    // Auto-refresh every 30 seconds
+    setInterval(loadAlerts, 30000);
+});
+</script>
+{% endblock %}

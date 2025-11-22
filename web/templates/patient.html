@@ -1,0 +1,345 @@
+{% extends "base.html" %}
+
+{% block title %}Patient {{ patient_id }} - ICU Agent{% endblock %}
+
+{% block content %}
+<!-- Patient Header -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center">
+            <h2>
+                <i class="bi bi-person-fill"></i>
+                Patient: <span id="patient-id">{{ patient_id }}</span>
+            </h2>
+            <a href="/" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Patient Summary Cards -->
+<div class="row mb-4" id="summary-cards">
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <h6 class="text-muted">Age / Gender</h6>
+                <h4 id="patient-demographics">--</h4>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <h6 class="text-muted">SOFA Score</h6>
+                <h4 id="patient-sofa">--</h4>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <h6 class="text-muted">Critical Values</h6>
+                <h4 id="patient-critical">--</h4>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <h6 class="text-muted">Alerts</h6>
+                <h4 id="patient-alerts">--</h4>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Trend Charts -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-white">
+                <h5 class="mb-0"><i class="bi bi-graph-up"></i> SOFA Score Trend</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="sofa-chart"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-white">
+                <h5 class="mb-0"><i class="bi bi-droplet-fill"></i> Lactate Trend</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="lactate-chart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-white">
+                <h5 class="mb-0"><i class="bi bi-activity"></i> Creatinine Trend</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="creatinine-chart"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-white">
+                <h5 class="mb-0"><i class="bi bi-heart-pulse"></i> Platelets Trend</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="platelets-chart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Alerts Table -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-white">
+                <h5 class="mb-0"><i class="bi bi-bell-fill"></i> Current Alerts</h5>
+            </div>
+            <div class="card-body">
+                <div id="alerts-container">
+                    <p class="text-center text-muted">Loading alerts...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Latest Report -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-white">
+                <h5 class="mb-0"><i class="bi bi-file-text-fill"></i> Latest Report</h5>
+            </div>
+            <div class="card-body">
+                <div id="report-container">
+                    <p class="text-center text-muted">Loading report...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+const patientId = "{{ patient_id }}";
+let charts = {};
+
+// Load patient details
+async function loadPatientDetails() {
+    try {
+        const response = await fetch(`/api/patient/${patientId}`);
+        const data = await response.json();
+
+        // Update summary cards
+        const parsed = data.parsed || {};
+        const patientInfo = parsed.patient_info || {};
+
+        const age = patientInfo.age || '--';
+        const gender = patientInfo.gender || '--';
+        document.getElementById('patient-demographics').textContent = `${age} / ${gender}`;
+
+        // SOFA score
+        const scores = data.scores || {};
+        const sofa = scores.scores?.sofa?.total_score;
+        if (sofa !== undefined) {
+            let badgeClass = 'bg-success';
+            if (sofa >= 15) badgeClass = 'bg-danger';
+            else if (sofa >= 10) badgeClass = 'bg-warning';
+            else if (sofa >= 5) badgeClass = 'bg-info';
+            document.getElementById('patient-sofa').innerHTML =
+                `<span class="badge ${badgeClass}">${sofa}/24</span>`;
+        }
+
+        // Critical values
+        const critical = data.critical || {};
+        const criticalAnalysis = critical.critical_analysis || {};
+        const summary = criticalAnalysis.summary || {};
+        const criticalCount = summary.total_critical_values || 0;
+        document.getElementById('patient-critical').innerHTML =
+            criticalCount > 0
+                ? `<span class="badge bg-warning">${criticalCount}</span>`
+                : '<span class="text-muted">0</span>';
+
+        // Alerts
+        const alerts = data.alerts || {};
+        const alertsList = alerts.alerts || [];
+        const alertsSummary = alerts.summary || {};
+        const immediateCount = alertsSummary.immediate_count || 0;
+        const urgentCount = alertsSummary.urgent_count || 0;
+        const totalAlerts = alertsList.length;
+
+        if (immediateCount > 0) {
+            document.getElementById('patient-alerts').innerHTML =
+                `<span class="badge bg-danger">${immediateCount} ACİL</span>`;
+        } else if (urgentCount > 0) {
+            document.getElementById('patient-alerts').innerHTML =
+                `<span class="badge bg-warning">${urgentCount} ÖNEMLİ</span>`;
+        } else if (totalAlerts > 0) {
+            document.getElementById('patient-alerts').innerHTML =
+                `<span class="badge bg-info">${totalAlerts} TAKİP</span>`;
+        } else {
+            document.getElementById('patient-alerts').textContent = 'No alerts';
+        }
+
+        // Display alerts
+        displayAlerts(alertsList);
+
+        // Load report
+        if (data.date) {
+            loadReport(patientId, data.date);
+        }
+
+    } catch (error) {
+        console.error('Error loading patient details:', error);
+    }
+}
+
+// Display alerts
+function displayAlerts(alerts) {
+    const container = document.getElementById('alerts-container');
+
+    if (alerts.length === 0) {
+        container.innerHTML = '<p class="text-center text-muted">No alerts for this patient</p>';
+        return;
+    }
+
+    container.innerHTML = '';
+
+    alerts.forEach(alert => {
+        const urgencyClass = {
+            'immediate': 'danger',
+            'urgent': 'warning',
+            'monitor': 'info'
+        }[alert.urgency] || 'secondary';
+
+        const urgencyText = {
+            'immediate': 'ACİL',
+            'urgent': 'ÖNEMLİ',
+            'monitor': 'TAKİP'
+        }[alert.urgency] || alert.urgency;
+
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${urgencyClass} mb-2`;
+        alertDiv.innerHTML = `
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <h6 class="alert-heading">
+                        <span class="badge bg-${urgencyClass}">${urgencyText}</span>
+                        ${alert.title}
+                    </h6>
+                    <p class="mb-1">${alert.description}</p>
+                    <p class="mb-0"><strong>Öneri:</strong> ${alert.recommendation}</p>
+                </div>
+            </div>
+        `;
+        container.appendChild(alertDiv);
+    });
+}
+
+// Load report
+async function loadReport(patientId, date) {
+    try {
+        const response = await fetch(`/api/report/${patientId}/${date}`);
+        const reportText = await response.text();
+
+        const container = document.getElementById('report-container');
+
+        // Simple markdown rendering (just format headings and lists)
+        const formatted = reportText
+            .replace(/^# (.*$)/gm, '<h2>$1</h2>')
+            .replace(/^## (.*$)/gm, '<h3>$1</h3>')
+            .replace(/^### (.*$)/gm, '<h4>$1</h4>')
+            .replace(/^\* (.*$)/gm, '<li>$1</li>')
+            .replace(/\n\n/g, '</p><p>')
+            .replace(/^([^<].*$)/gm, '<p>$1</p>');
+
+        container.innerHTML = `<div class="report-content">${formatted}</div>`;
+    } catch (error) {
+        console.error('Error loading report:', error);
+        document.getElementById('report-container').innerHTML =
+            '<p class="text-danger">Error loading report</p>';
+    }
+}
+
+// Load trends and create charts
+async function loadTrends() {
+    try {
+        const response = await fetch(`/api/patient/${patientId}/trends?days=7`);
+        const data = await response.json();
+
+        createChart('sofa-chart', 'SOFA Score', data.sofa, 'rgb(220, 53, 69)', 0, 24);
+        createChart('lactate-chart', 'Lactate (mmol/L)', data.lactate, 'rgb(255, 193, 7)', 0, 10);
+        createChart('creatinine-chart', 'Creatinine (mg/dL)', data.creatinine, 'rgb(13, 202, 240)', 0, 5);
+        createChart('platelets-chart', 'Platelets (×10³/µL)', data.platelets, 'rgb(25, 135, 84)', 0, 500);
+
+    } catch (error) {
+        console.error('Error loading trends:', error);
+    }
+}
+
+// Create trend chart
+function createChart(canvasId, label, data, color, minY, maxY) {
+    const canvas = document.getElementById(canvasId);
+
+    // Destroy existing chart
+    if (charts[canvasId]) {
+        charts[canvasId].destroy();
+    }
+
+    const dates = data.map(d => d.date);
+    const values = data.map(d => d.value);
+
+    charts[canvasId] = new Chart(canvas, {
+        type: 'line',
+        data: {
+            labels: dates,
+            datasets: [{
+                label: label,
+                data: values,
+                borderColor: color,
+                backgroundColor: color.replace('rgb', 'rgba').replace(')', ', 0.1)'),
+                tension: 0.1,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    min: minY,
+                    max: maxY
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+    loadPatientDetails();
+    loadTrends();
+});
+</script>
+{% endblock %}

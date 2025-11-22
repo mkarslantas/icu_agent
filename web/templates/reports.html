@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+
+{% block title %}Reports - ICU Agent{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2><i class="bi bi-file-text-fill"></i> Patient Reports</h2>
+    </div>
+</div>
+
+<!-- Patient Selector -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <label for="patient-select" class="form-label">Select Patient</label>
+                <select class="form-select" id="patient-select">
+                    <option value="">-- Select a patient --</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <label for="date-select" class="form-label">Select Date</label>
+                <select class="form-select" id="date-select" disabled>
+                    <option value="">-- Select a date --</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Report Display -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Report Content</h5>
+                <button class="btn btn-sm btn-primary" id="download-btn" disabled>
+                    <i class="bi bi-download"></i> Download
+                </button>
+            </div>
+            <div class="card-body">
+                <div id="report-content">
+                    <p class="text-center text-muted">Select a patient and date to view report</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+let selectedPatient = null;
+let selectedDate = null;
+
+// Load patients for selector
+async function loadPatients() {
+    try {
+        const response = await fetch('/api/patients');
+        const data = await response.json();
+
+        const select = document.getElementById('patient-select');
+        select.innerHTML = '<option value="">-- Select a patient --</option>';
+
+        data.patients.forEach(patient => {
+            const option = document.createElement('option');
+            option.value = patient.patient_id;
+            option.textContent = `${patient.patient_id} - ${patient.age || '?'} ${patient.gender || '?'}`;
+            select.appendChild(option);
+        });
+
+    } catch (error) {
+        console.error('Error loading patients:', error);
+    }
+}
+
+// Load dates for selected patient
+async function loadDates(patientId) {
+    try {
+        const response = await fetch(`/api/patient/${patientId}`);
+        const data = await response.json();
+
+        const select = document.getElementById('date-select');
+        select.innerHTML = '<option value="">-- Select a date --</option>';
+        select.disabled = false;
+
+        const dates = data.available_dates || [];
+        dates.forEach(date => {
+            const option = document.createElement('option');
+            option.value = date;
+            option.textContent = date;
+            select.appendChild(option);
+        });
+
+        // Auto-select latest date
+        if (dates.length > 0) {
+            select.value = dates[0];
+            selectedDate = dates[0];
+            loadReport(patientId, dates[0]);
+        }
+
+    } catch (error) {
+        console.error('Error loading dates:', error);
+    }
+}
+
+// Load and display report
+async function loadReport(patientId, date) {
+    try {
+        const container = document.getElementById('report-content');
+        container.innerHTML = '<div class="text-center"><div class="spinner-border text-primary"></div></div>';
+
+        const response = await fetch(`/api/report/${patientId}/${date}`);
+        const reportText = await response.text();
+
+        // Simple markdown rendering
+        const formatted = reportText
+            .replace(/^# (.*$)/gm, '<h2>$1</h2>')
+            .replace(/^## (.*$)/gm, '<h3>$1</h3>')
+            .replace(/^### (.*$)/gm, '<h4>$1</h4>')
+            .replace(/^\* (.*$)/gm, '<li>$1</li>')
+            .replace(/^\- (.*$)/gm, '<li>$1</li>')
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+            .replace(/\n\n/g, '</p><p>')
+            .replace(/^([^<].*$)/gm, '<p>$1</p>')
+            .replace(/<p><li>/g, '<ul><li>')
+            .replace(/<\/li><\/p>/g, '</li></ul>');
+
+        container.innerHTML = `<div class="report-content">${formatted}</div>`;
+
+        // Enable download button
+        document.getElementById('download-btn').disabled = false;
+
+    } catch (error) {
+        console.error('Error loading report:', error);
+        document.getElementById('report-content').innerHTML =
+            '<p class="text-danger text-center">Error loading report</p>';
+    }
+}
+
+// Download report
+function downloadReport() {
+    if (!selectedPatient || !selectedDate) return;
+
+    window.open(`/api/report/${selectedPatient}/${selectedDate}`, '_blank');
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+    loadPatients();
+
+    // Patient selection change
+    document.getElementById('patient-select').addEventListener('change', (e) => {
+        selectedPatient = e.target.value;
+
+        if (selectedPatient) {
+            loadDates(selectedPatient);
+        } else {
+            document.getElementById('date-select').disabled = true;
+            document.getElementById('date-select').innerHTML = '<option value="">-- Select a date --</option>';
+            document.getElementById('report-content').innerHTML =
+                '<p class="text-center text-muted">Select a patient and date to view report</p>';
+            document.getElementById('download-btn').disabled = true;
+        }
+    });
+
+    // Date selection change
+    document.getElementById('date-select').addEventListener('change', (e) => {
+        selectedDate = e.target.value;
+
+        if (selectedDate && selectedPatient) {
+            loadReport(selectedPatient, selectedDate);
+        }
+    });
+
+    // Download button
+    document.getElementById('download-btn').addEventListener('click', downloadReport);
+});
+</script>
+{% endblock %}
